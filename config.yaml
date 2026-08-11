@@ -1,0 +1,40 @@
+project:
+  name: "Audio Deepfake Detection using Self-Supervised Speech Representations"
+  task: "binary_audio_classification"
+
+data:
+  dataset_name: "ASVspoof 2019 LA"
+  raw_dir: "data/raw/asvspoof2019_la"
+  metadata_dir: "data/metadata"
+  processed_dir: "data/processed"
+  labels:
+    bonafide: 0
+    spoof: 1
+
+audio:
+  sample_rate: 16000
+  mono: true
+  max_duration_seconds: 6.0
+
+baseline:
+  feature_type: "mfcc"
+  n_mfcc: 40
+
+model:
+  ssl_model_name: "microsoft/wavlm-base-plus"
+  num_labels: 2
+
+training:
+  batch_size: 8
+  epochs: 5
+  learning_rate: 0.00002
+  seed: 42
+
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc
+    - eer
