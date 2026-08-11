@@ -2,6 +2,8 @@
 
 This project detects whether a speech audio sample is real human speech (`bonafide`) or fake/spoofed/generated speech (`spoof`).
 
+[![CI](https://github.com/KJSK-Koushik/Audio-Deepfake-Detection-using-Self-Supervised-Speech-Representations/actions/workflows/ci.yml/badge.svg)](https://github.com/KJSK-Koushik/Audio-Deepfake-Detection-using-Self-Supervised-Speech-Representations/actions/workflows/ci.yml)
+
 ## Project Scope
 
 - Primary dataset: ASVspoof 2019 Logical Access (LA)
@@ -28,18 +30,58 @@ The task is speech-processing specific because the input is speech audio, and th
 | 8 | Streamlit demo app | Working local demo |
 | 9 | Final report and presentation | Submission package |
 
+Implementation moves one phase at a time. A phase is reviewed and approved before work starts on the next one. See [docs/PHASES.md](docs/PHASES.md) for completion criteria.
+
+Current gate: Phase 0 is complete. Phase 1 has not started.
+
+## Repository Structure
+
+```text
+.
+|-- config.yaml             # Shared experiment settings
+|-- data/                   # Dataset instructions; audio is not committed
+|-- docs/                   # Project specification and phase gates
+|-- models/                 # Local model checkpoints (ignored by Git)
+|-- notebooks/              # Optional exploration notebooks
+|-- reports/                # Generated figures and result tables
+|-- scripts/                # Setup and environment utilities
+|-- src/
+|   |-- data/               # Dataset indexing and preprocessing
+|   |-- evaluation/         # Metrics and evaluation
+|   |-- features/           # MFCC/mel/SSL feature extraction
+|   `-- models/             # Baseline and deep models
+`-- tests/                  # Automated tests
+```
+
 ## Setup
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements-dev.txt
+```powershell
+.\scripts\setup_environment.ps1
+```
+
+The repository path is long enough to break installation of some PyTorch files on Windows. The setup script therefore creates the isolated environment at `%LOCALAPPDATA%\audio-deepfake-detection-venv`.
+
+Store its Python path for the current PowerShell session:
+
+```powershell
+$ProjectPython = "$env:LOCALAPPDATA\audio-deepfake-detection-venv\Scripts\python.exe"
+```
+
+Check the machine and installed ML packages:
+
+```powershell
+& $ProjectPython scripts\check_environment.py --strict
 ```
 
 ## Smoke Test
 
-```bash
-pytest
+```powershell
+& $ProjectPython -m ruff check .
+& $ProjectPython -m pytest
 ```
 
 Dataset files and trained model checkpoints are intentionally not committed to GitHub.
+
+## CI/CD
+
+GitHub Actions runs linting and smoke tests on every push and pull request to `main`. Model training is excluded because hosted CI is not the right place for long GPU experiments. Deployment will be added in Phase 8 after the Streamlit application exists; there is nothing useful to deploy during Phase 0.

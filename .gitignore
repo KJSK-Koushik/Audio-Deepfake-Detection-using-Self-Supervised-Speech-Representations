@@ -17,9 +17,12 @@ env/
 data/raw/
 data/processed/
 data/metadata/
-models/
-reports/figures/
-reports/results/
+models/*
+!models/README.md
+reports/figures/*
+!reports/figures/.gitkeep
+reports/results/*
+!reports/results/.gitkeep
 *.pt
 *.pth
 *.pkl
