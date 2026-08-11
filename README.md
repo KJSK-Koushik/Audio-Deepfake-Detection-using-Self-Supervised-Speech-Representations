@@ -32,7 +32,7 @@ The task is speech-processing specific because the input is speech audio, and th
 
 Implementation moves one phase at a time. A phase is reviewed and approved before work starts on the next one. See [docs/PHASES.md](docs/PHASES.md) for completion criteria.
 
-Current gate: Phase 0 is complete. Phase 1 has not started.
+Current gate: Phase 1 is complete. Phase 2 has not started and requires explicit approval.
 
 ## Repository Structure
 
@@ -81,6 +81,25 @@ Check the machine and installed ML packages:
 ```
 
 Dataset files and trained model checkpoints are intentionally not committed to GitHub.
+
+## Phase 1 Dataset Setup
+
+Create the official ASVspoof 2019 LA metadata indexes without requiring the audio download:
+
+```powershell
+& $ProjectPython -m scripts.fetch_asvspoof2019_protocols
+& $ProjectPython -m scripts.build_asvspoof2019_metadata --skip-audio-check
+```
+
+Download checksum-verified audio containers from the pinned mirror as needed:
+
+```powershell
+.\scripts\download_asvspoof2019_hf.ps1 -Split train
+.\scripts\download_asvspoof2019_hf.ps1 -Split dev
+```
+
+The evaluation split can be downloaded later with `-Split eval`. See
+[docs/PHASE_1_REPORT.md](docs/PHASE_1_REPORT.md) for provenance, counts, and validation details.
 
 ## CI/CD
 

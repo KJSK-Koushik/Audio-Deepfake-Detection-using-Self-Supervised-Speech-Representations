@@ -18,4 +18,6 @@ Work stops at the end of every phase for review. The next phase starts only afte
 ## Current Status
 
 - Phase 0: complete (local environment, smoke tests, and CI skeleton verified)
-- Phases 1-9: waiting for approval
+- Phase 1: complete (official protocol metadata and integrity-checked download tooling verified)
+- Phase 2: waiting for explicit approval
+- Phases 3-9: not started
