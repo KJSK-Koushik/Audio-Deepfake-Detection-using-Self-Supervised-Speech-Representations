@@ -17,6 +17,8 @@ audio:
   sample_rate: 16000
   mono: true
   max_duration_seconds: 6.0
+  crop_mode: "center"
+  pad_value: 0.0
 
 baseline:
   feature_type: "mfcc"

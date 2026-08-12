@@ -29,5 +29,11 @@ def validate_config(config: object) -> None:
     if config["audio"]["sample_rate"] <= 0:
         raise ValueError("audio.sample_rate must be positive.")
 
+    if config["audio"]["max_duration_seconds"] <= 0:
+        raise ValueError("audio.max_duration_seconds must be positive.")
+
+    if config["audio"].get("crop_mode") not in {"start", "center"}:
+        raise ValueError("audio.crop_mode must be 'start' or 'center'.")
+
     if config["data"]["labels"] != {"bonafide": 0, "spoof": 1}:
         raise ValueError("Labels must map bonafide to 0 and spoof to 1.")

@@ -32,7 +32,7 @@ The task is speech-processing specific because the input is speech audio, and th
 
 Implementation moves one phase at a time. A phase is reviewed and approved before work starts on the next one. See [docs/PHASES.md](docs/PHASES.md) for completion criteria.
 
-Current gate: Phase 1 is complete. Phase 2 has not started and requires explicit approval.
+Current gate: Phase 2 is complete. Phase 3 has not started and requires explicit approval.
 
 ## Repository Structure
 
@@ -101,6 +101,24 @@ Download checksum-verified audio containers from the pinned mirror as needed:
 The evaluation split can be downloaded later with `-Split eval`. See
 [docs/PHASE_1_REPORT.md](docs/PHASE_1_REPORT.md) for provenance, counts, and validation details.
 
+## Phase 2 Audio Preprocessing
+
+Audit every downloaded train and development recording and create local row manifests:
+
+```powershell
+& $ProjectPython -m scripts.audit_asvspoof2019_audio
+```
+
+The loader in `src/data/audio.py` decodes embedded FLAC audio, mixes stereo inputs to mono,
+resamples when necessary, and returns a fixed 6-second waveform with an attention mask. Short
+recordings are zero-padded and longer recordings are center-cropped. Processing happens on demand,
+so the project does not store a second large copy of the audio.
+
+See [docs/PHASE_2_REPORT.md](docs/PHASE_2_REPORT.md) for the complete audit results.
+
 ## CI/CD
 
-GitHub Actions runs linting and smoke tests on every push and pull request to `main`. Model training is excluded because hosted CI is not the right place for long GPU experiments. Deployment will be added in Phase 8 after the Streamlit application exists; there is nothing useful to deploy during Phase 0.
+GitHub Actions runs linting and unit tests on every push and pull request to `main`. Tests include
+synthetic FLAC decoding and preprocessing without downloading the dataset in CI. Model training is
+excluded because hosted CI is not the right place for long GPU experiments. Deployment will be
+added in Phase 8 after the Streamlit application exists.
