@@ -5,8 +5,10 @@ project:
 data:
   dataset_name: "ASVspoof 2019 LA"
   raw_dir: "data/raw/asvspoof2019_la"
+  parquet_dir: "data/raw/asvspoof2019_la/huggingface"
   metadata_dir: "data/metadata"
   processed_dir: "data/processed"
+  verify_audio_files: true
   labels:
     bonafide: 0
     spoof: 1
