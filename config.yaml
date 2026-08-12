@@ -23,6 +23,14 @@ audio:
 baseline:
   feature_type: "mfcc"
   n_mfcc: 40
+  n_mels: 80
+  n_fft: 400
+  hop_length: 160
+  fmin: 20
+  fmax: 7600
+  classifier: "logistic_regression"
+  class_weight: "balanced"
+  max_iter: 1000
 
 model:
   ssl_model_name: "microsoft/wavlm-base-plus"

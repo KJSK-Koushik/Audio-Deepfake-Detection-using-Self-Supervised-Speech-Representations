@@ -32,7 +32,7 @@ The task is speech-processing specific because the input is speech audio, and th
 
 Implementation moves one phase at a time. A phase is reviewed and approved before work starts on the next one. See [docs/PHASES.md](docs/PHASES.md) for completion criteria.
 
-Current gate: Phase 2 is complete. Phase 3 has not started and requires explicit approval.
+Current gate: Phase 3 is complete. Phase 4 has not started and requires explicit approval.
 
 ## Repository Structure
 
@@ -115,6 +115,19 @@ recordings are zero-padded and longer recordings are center-cropped. Processing 
 so the project does not store a second large copy of the audio.
 
 See [docs/PHASE_2_REPORT.md](docs/PHASE_2_REPORT.md) for the complete audit results.
+
+## Phase 3 MFCC Baseline
+
+Extract cached MFCC statistics, train the class-balanced logistic regression baseline, and evaluate
+it on the official development split:
+
+```powershell
+& $ProjectPython -m scripts.run_mfcc_baseline --jobs 6 --batch-size 500
+```
+
+The full run uses all 25,380 training and 24,844 development recordings. It reports both ordinary
+classification metrics and imbalance-aware metrics such as balanced accuracy, macro-F1, ROC-AUC,
+and EER. See [docs/PHASE_3_REPORT.md](docs/PHASE_3_REPORT.md) for results and interpretation.
 
 ## CI/CD
 
