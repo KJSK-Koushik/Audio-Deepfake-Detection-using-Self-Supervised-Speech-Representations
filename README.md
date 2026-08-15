@@ -32,7 +32,8 @@ The task is speech-processing specific because the input is speech audio, and th
 
 Implementation moves one phase at a time. A phase is reviewed and approved before work starts on the next one. See [docs/PHASES.md](docs/PHASES.md) for completion criteria.
 
-Current gate: Phase 3 is complete. Phase 4 has not started and requires explicit approval.
+Current gate: Phase 4 is in progress. The WavLM pipeline and local real-model smoke test are
+complete, while the full GPU training run is still pending.
 
 ## Repository Structure
 
@@ -128,6 +129,12 @@ it on the official development split:
 The full run uses all 25,380 training and 24,844 development recordings. It reports both ordinary
 classification metrics and imbalance-aware metrics such as balanced accuracy, macro-F1, ROC-AUC,
 and EER. See [docs/PHASE_3_REPORT.md](docs/PHASE_3_REPORT.md) for results and interpretation.
+
+## Phase 4 WavLM Training
+
+The main detector fine-tunes the pinned `microsoft/wavlm-base-plus` checkpoint with class-weighted
+loss. See [docs/PHASE_4_GPU_RUN.md](docs/PHASE_4_GPU_RUN.md) for the Colab/Kaggle commands and current
+completion status. The evaluation split remains untouched.
 
 ## CI/CD
 
