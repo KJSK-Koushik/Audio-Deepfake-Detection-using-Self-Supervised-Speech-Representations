@@ -6,7 +6,16 @@ import yaml
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG_PATH = ROOT_DIR / "config.yaml"
 
-REQUIRED_SECTIONS = {"project", "data", "audio", "baseline", "model", "training", "evaluation"}
+REQUIRED_SECTIONS = {
+    "project",
+    "data",
+    "audio",
+    "baseline",
+    "model",
+    "wavlm_training",
+    "training",
+    "evaluation",
+}
 
 
 def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> dict[str, Any]:
@@ -34,6 +43,12 @@ def validate_config(config: object) -> None:
 
     if config["audio"].get("crop_mode") not in {"start", "center"}:
         raise ValueError("audio.crop_mode must be 'start' or 'center'.")
+
+    if config["model"]["num_labels"] != 2:
+        raise ValueError("model.num_labels must be 2.")
+
+    if config["wavlm_training"]["learning_rate"] <= 0:
+        raise ValueError("wavlm_training.learning_rate must be positive.")
 
     if config["data"]["labels"] != {"bonafide": 0, "spoof": 1}:
         raise ValueError("Labels must map bonafide to 0 and spoof to 1.")

@@ -34,7 +34,22 @@ baseline:
 
 model:
   ssl_model_name: "microsoft/wavlm-base-plus"
+  revision: "a20e37f197dc9d0a2bb65f527b64d64c46f40279"
   num_labels: 2
+  classifier_proj_size: 256
+
+wavlm_training:
+  epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 0.00001
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  freeze_feature_encoder: true
+  gradient_checkpointing: true
+  num_workers: 2
+  log_every_steps: 50
 
 training:
   batch_size: 8
