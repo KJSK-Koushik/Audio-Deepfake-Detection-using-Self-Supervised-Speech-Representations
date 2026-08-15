@@ -20,5 +20,6 @@ Work stops at the end of every phase for review. The next phase starts only afte
 - Phase 0: complete (local environment, smoke tests, and CI skeleton verified)
 - Phase 1: complete (official protocol metadata and integrity-checked download tooling verified)
 - Phase 2: complete (all downloaded audio decoded and model-ready loading verified)
-- Phase 3: waiting for explicit approval
-- Phases 4-9: not started
+- Phase 3: complete (full MFCC baseline and reproducible development metrics verified)
+- Phase 4: waiting for explicit approval
+- Phases 5-9: not started
