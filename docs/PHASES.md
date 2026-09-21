@@ -21,5 +21,5 @@ Work stops at the end of every phase for review. The next phase starts only afte
 - Phase 1: complete (official protocol metadata and integrity-checked download tooling verified)
 - Phase 2: complete (all downloaded audio decoded and model-ready loading verified)
 - Phase 3: complete (full MFCC baseline and reproducible development metrics verified)
-- Phase 4: waiting for explicit approval
+- Phase 4: in progress (pipeline and CPU smoke test complete; full GPU training pending)
 - Phases 5-9: not started

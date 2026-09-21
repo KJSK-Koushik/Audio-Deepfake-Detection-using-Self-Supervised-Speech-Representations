@@ -9,7 +9,8 @@ soundfile>=0.12,<1
 librosa>=0.10,<1
 torch==2.7.1
 torchaudio==2.7.1
-transformers>=4.43,<5
+transformers>=4.57,<4.58
+safetensors>=0.4,<1
 streamlit>=1.36,<2
 pyyaml>=6.0,<7
 tqdm>=4.66,<5
