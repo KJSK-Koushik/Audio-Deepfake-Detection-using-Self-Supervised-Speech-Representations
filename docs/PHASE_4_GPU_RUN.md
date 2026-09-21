@@ -45,7 +45,7 @@ The best checkpoint is written to `models/wavlm_detector/`. The directory contai
 
 Download or copy that complete directory back into this repository's local `models/` directory. Model files are intentionally ignored by Git.
 
-An executable notebook with Google Drive checkpoint storage is provided at `notebooks/phase_4_wavlm_colab.ipynb`.
+An executable notebook is provided at `notebooks/phase_4_wavlm_colab.ipynb`. It stores the checkpoint temporarily under `/content/wavlm_detector`, packages the directory as `/content/wavlm_detector.zip`, and downloads the bundle after training. This avoids Colab Drive-mount failures caused by blocked third-party cookies. Keep the Colab tab and runtime connected until the download finishes.
 
 ## Training Protocol
 
