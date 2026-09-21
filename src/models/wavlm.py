@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import pyarrow.parquet as pq
 import torch
+from torch import nn
 from torch.utils.data import Subset
 
 from src.data.audio import ASVspoofParquetDataset
@@ -94,3 +95,37 @@ def balanced_class_weights(labels: np.ndarray) -> torch.Tensor:
         raise ValueError("Both label classes 0 and 1 are required")
     weights = len(labels) / (len(classes) * counts.astype(np.float64))
     return torch.tensor(weights, dtype=torch.float32)
+
+
+def configure_partial_finetuning(
+    model: nn.Module, trainable_transformer_layers: int
+) -> dict[str, int]:
+    """Freeze WavLM except its final transformer blocks and task head."""
+    backbone = model.wavlm
+    encoder_layers = backbone.encoder.layers
+    total_layers = len(encoder_layers)
+    if not 0 <= trainable_transformer_layers <= total_layers:
+        raise ValueError(
+            "trainable_transformer_layers must be between 0 and " f"{total_layers}"
+        )
+
+    for parameter in backbone.parameters():
+        parameter.requires_grad = False
+
+    if trainable_transformer_layers:
+        for layer in encoder_layers[-trainable_transformer_layers:]:
+            for parameter in layer.parameters():
+                parameter.requires_grad = True
+        final_layer_norm = getattr(backbone.encoder, "layer_norm", None)
+        if final_layer_norm is not None:
+            for parameter in final_layer_norm.parameters():
+                parameter.requires_grad = True
+
+    return {
+        "total": sum(parameter.numel() for parameter in model.parameters()),
+        "trainable": sum(
+            parameter.numel() for parameter in model.parameters() if parameter.requires_grad
+        ),
+        "total_transformer_layers": total_layers,
+        "trainable_transformer_layers": trainable_transformer_layers,
+    }

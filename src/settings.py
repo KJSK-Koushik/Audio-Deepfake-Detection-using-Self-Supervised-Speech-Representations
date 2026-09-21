@@ -50,5 +50,9 @@ def validate_config(config: object) -> None:
     if config["wavlm_training"]["learning_rate"] <= 0:
         raise ValueError("wavlm_training.learning_rate must be positive.")
 
+    trainable_layers = config["wavlm_training"]["trainable_transformer_layers"]
+    if not isinstance(trainable_layers, int) or not 0 <= trainable_layers <= 12:
+        raise ValueError("wavlm_training.trainable_transformer_layers must be between 0 and 12.")
+
     if config["data"]["labels"] != {"bonafide": 0, "spoof": 1}:
         raise ValueError("Labels must map bonafide to 0 and spoof to 1.")

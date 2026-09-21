@@ -7,8 +7,22 @@ transformers = pytest.importorskip("transformers")
 from src.models.wavlm import (  # noqa: E402
     balanced_class_weights,
     collate_audio_records,
+    configure_partial_finetuning,
     stratified_indices,
 )
+
+
+class DummyWavLMClassifier(torch.nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.wavlm = torch.nn.Module()
+        self.wavlm.feature_projection = torch.nn.Linear(2, 2)
+        self.wavlm.encoder = torch.nn.Module()
+        self.wavlm.encoder.layers = torch.nn.ModuleList(
+            [torch.nn.Linear(2, 2) for _ in range(4)]
+        )
+        self.wavlm.encoder.layer_norm = torch.nn.LayerNorm(2)
+        self.classifier = torch.nn.Linear(2, 2)
 
 
 def test_stratified_indices_are_reproducible_and_include_both_classes() -> None:
@@ -50,3 +64,23 @@ def test_collate_audio_records_returns_wavlm_tensors() -> None:
     assert batch["input_values"].shape == (2, 16)
     assert batch["attention_mask"].dtype == torch.int64
     assert batch["labels"].tolist() == [0, 1]
+
+
+def test_partial_finetuning_keeps_only_last_layers_and_head_trainable() -> None:
+    model = DummyWavLMClassifier()
+
+    counts = configure_partial_finetuning(model, trainable_transformer_layers=2)
+
+    assert not any(parameter.requires_grad for parameter in model.wavlm.feature_projection.parameters())
+    assert not any(parameter.requires_grad for parameter in model.wavlm.encoder.layers[0].parameters())
+    assert not any(parameter.requires_grad for parameter in model.wavlm.encoder.layers[1].parameters())
+    assert all(parameter.requires_grad for parameter in model.wavlm.encoder.layers[2].parameters())
+    assert all(parameter.requires_grad for parameter in model.wavlm.encoder.layers[3].parameters())
+    assert all(parameter.requires_grad for parameter in model.wavlm.encoder.layer_norm.parameters())
+    assert all(parameter.requires_grad for parameter in model.classifier.parameters())
+    assert counts["trainable_transformer_layers"] == 2
+
+
+def test_partial_finetuning_rejects_too_many_layers() -> None:
+    with pytest.raises(ValueError, match="between 0 and 4"):
+        configure_partial_finetuning(DummyWavLMClassifier(), trainable_transformer_layers=5)

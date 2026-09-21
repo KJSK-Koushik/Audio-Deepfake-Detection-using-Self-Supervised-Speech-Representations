@@ -20,6 +20,7 @@ from src.evaluation.binary import binary_classification_metrics
 from src.models.wavlm import (
     balanced_class_weights,
     collate_audio_records,
+    configure_partial_finetuning,
     load_parquet_labels,
     make_audio_dataset,
     seed_everything,
@@ -143,11 +144,18 @@ def main() -> int:
         label2id={"bonafide": 0, "spoof": 1},
         classifier_proj_size=int(config["model"]["classifier_proj_size"]),
     )
-    if bool(wavlm_config["freeze_feature_encoder"]):
-        model.freeze_feature_encoder()
+    parameter_counts = configure_partial_finetuning(
+        model, int(wavlm_config["trainable_transformer_layers"])
+    )
     if bool(wavlm_config["gradient_checkpointing"]) and not args.no_gradient_checkpointing:
         model.gradient_checkpointing_enable()
     model.to(device)
+    print(
+        "WavLM parameters: "
+        f"{parameter_counts['trainable']:,} trainable / {parameter_counts['total']:,} total; "
+        f"fine-tuning final {parameter_counts['trainable_transformer_layers']} of "
+        f"{parameter_counts['total_transformer_layers']} transformer layers"
+    )
 
     train_labels = selected_labels(train_dataset, train_path)
     class_weights = balanced_class_weights(train_labels).to(device)
@@ -230,6 +238,7 @@ def main() -> int:
                 "train_rows": len(train_dataset),
                 "dev_rows": len(dev_dataset),
                 "class_weights": class_weights.detach().cpu().tolist(),
+                "parameter_counts": parameter_counts,
                 "best_epoch": epoch,
                 "training_configuration": wavlm_config,
                 "history": history,
