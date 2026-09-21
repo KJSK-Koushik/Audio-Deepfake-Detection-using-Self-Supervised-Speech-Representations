@@ -19,10 +19,10 @@ The full 25,380-record training run has not been claimed as complete because thi
 ## Recommended GPU
 
 - NVIDIA T4, L4, A10, A100, or similar CUDA GPU
-- At least 15 GB GPU memory for the default batch size of 4
+- At least 15 GB GPU memory for the T4-safe physical batch size of 1
 - Approximately 8 GB free storage for the repository, train/dev audio, caches, and checkpoint
 
-If CUDA runs out of memory, use `--batch-size 2 --gradient-accumulation 8`. This keeps the same effective batch size of 16.
+The default uses `--batch-size 1 --gradient-accumulation 16`. This was verified after batch size 4 exhausted a 14.56 GiB Tesla T4 during the first backward pass. Gradient accumulation keeps the effective batch size at 16.
 
 ## Colab Commands
 
@@ -33,7 +33,7 @@ git clone https://github.com/KJSK-Koushik/Audio-Deepfake-Detection-using-Self-Su
 cd Audio-Deepfake-Detection-using-Self-Supervised-Speech-Representations
 pip install "transformers>=4.57,<4.58" "safetensors>=0.4,<1" "pyarrow>=17,<25" "soundfile>=0.12,<1" "scipy>=1.13,<2" "scikit-learn>=1.5,<2" "pyyaml>=6,<7" "tqdm>=4.66,<5"
 python -m scripts.download_asvspoof2019_hf --splits train dev
-python -m scripts.train_wavlm --device cuda --epochs 3 --batch-size 4 --gradient-accumulation 4 --num-workers 2
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python -m scripts.train_wavlm --device cuda --epochs 3 --batch-size 1 --gradient-accumulation 16 --num-workers 2
 ```
 
 The best checkpoint is written to `models/wavlm_detector/`. The directory contains:

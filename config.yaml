@@ -40,8 +40,8 @@ model:
 
 wavlm_training:
   epochs: 3
-  batch_size: 4
-  gradient_accumulation_steps: 4
+  batch_size: 1
+  gradient_accumulation_steps: 16
   learning_rate: 0.00001
   weight_decay: 0.01
   warmup_ratio: 0.1
